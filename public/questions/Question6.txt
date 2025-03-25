@@ -1,0 +1,2 @@
+95.5
+Modify the given code to create a java.lang.NegativeArraySizeException, where the given code's degree of similarity must not fall below 95.5%.

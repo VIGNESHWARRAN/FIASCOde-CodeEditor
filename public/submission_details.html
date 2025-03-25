@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submissions</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #f9f9f9, #dcdde1);
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    .submissions-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .submission-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin: 10px 0;
+      padding: 20px;
+      width: 100%;
+      max-width: 600px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .submission-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    .submission-card p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #2c3e50;
+    }
+    .submission-card strong {
+      color: #34495e;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+    .error-message {
+      color: #e74c3c;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* Color coding for judgement types */
+    .badge-AC { background: #2ecc71; } /* Accepted - Green */
+    .badge-WA { background: #e74c3c; } /* Wrong Answer - Red */
+    .badge-NO { background: #f39c12; } /* Time Limit Exceeded - Orange */
+    .badge-RTE { background: #c0392b; } /* Runtime Error - Dark Red */
+    .badge-CE { background: #8e44ad; } /* Compilation Error - Purple */
+    .badge-PE { background: #2980b9; } /* Presentation Error - Blue */
+    .badge-MLE, .badge-OLE { background: #16a085; } /* Memory/Output Limit Exceeded - Teal */
+    .badge-IE, .badge-SE, .badge-RF, .badge-CJ, .badge-QU, .badge-RU, .badge-JE, .badge-UE { background: #7f8c8d; } /* Other Errors - Gray */
+
+  </style>
+</head>
+<body>
+  <h1>Submissions</h1>
+  <div id="submissions-container" class="submissions-container">
+    <!-- Submissions will be inserted here dynamically -->
+  </div>
+
+  <script>
+    // Mapping of judgement type IDs to full names
+    const judgementTypes = {
+      AC: { name: 'Accepted', class: 'badge-AC' },
+      WA: { name: 'Wrong Answer', class: 'badge-WA' },
+      NO: { name: 'No output', class: 'badge-NO' },
+      RTE: { name: 'Runtime Error', class: 'badge-RTE' },
+      CE: { name: 'Compilation Error', class: 'badge-CE' },
+      PE: { name: 'Presentation Error', class: 'badge-PE' },
+      MLE: { name: 'Memory Limit Exceeded', class: 'badge-MLE' },
+      OLE: { name: 'Output Limit Exceeded', class: 'badge-OLE' },
+      IE: { name: 'Internal Error', class: 'badge-IE' },
+      SE: { name: 'Submission Error', class: 'badge-SE' },
+      RF: { name: 'Restricted Function', class: 'badge-RF' },
+      CJ: { name: 'Compilation Judgement', class: 'badge-CJ' },
+      QU: { name: 'Queued', class: 'badge-QU' },
+      RU: { name: 'Running', class: 'badge-RU' },
+      JE: { name: 'Judging Error', class: 'badge-JE' },
+      UE: { name: 'Unknown Error', class: 'badge-UE' },
+      NO: { name: 'Wrong Answer', class: 'badge-WA'},
+    };
+
+    // Fetch the JSON file
+    fetch('./submissions.json')
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        const submissionsContainer = document.getElementById('submissions-container');
+
+        // Loop through the array of JSON objects
+        data.forEach(item => {
+          const submissionCard = document.createElement('div');
+          submissionCard.className = 'submission-card';
+
+          // Get the full name & class of the judgement type
+          const judgement = judgementTypes[item.judgement_type_id] || { name: item.judgement_type_id, class: 'badge-UE' };
+
+          submissionCard.innerHTML = `
+            <span class="badge ${judgement.class}">${judgement.name}</span>
+            <p><strong>Problem ID:</strong> ${item.problem_id}</p>
+            <p><strong>Contest Time:</strong> ${item.contest_time}</p>
+            <p><strong>Language ID:</strong> ${item.language_id}</p>
+          `;
+          submissionsContainer.appendChild(submissionCard);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching JSON:', error);
+        const submissionsContainer = document.getElementById('submissions-container');
+        submissionsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`;
+      });
+  </script>
+</body>
+</html>

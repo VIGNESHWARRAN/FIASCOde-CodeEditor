@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-image: url('https://i.ytimg.com/vi/Lu-7RmiQJ38/maxresdefault.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    header {
+      background-color: #a4123f;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 999;
+      /* Ensure header stays above other content */
+    }
+
+    header img {
+      max-width: 150px;
+      /* Adjust size as needed */
+      margin-right: 10px;
+    }
+
+    header h1 {
+      margin: 0;
+      flex-grow: 1;
+      /* Allow the text to occupy remaining space */
+      text-align: center;
+      /* Center align the text */
+    }
+
+    .login-container {
+      background-color: rgba(255, 255, 255, 0.8);
+      /* Adjust transparency by changing the last value (0.8) */
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      position: relative;
+      /* Add position relative for absolute positioning */
+    }
+
+    .login-container img {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 90px;
+      /* Adjust width as needed */
+    }
+
+    .login-form {
+      max-width: 400px;
+      margin: auto;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus {
+      border-color: #007bff;
+    }
+
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      background: white;
+      color: black;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group select:focus {
+      border-color: #007bff;
+    }
+
+    .login-button {
+      width: 100%;
+      /* Modify button width to span full width */
+      padding: 12px;
+      border: none;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 16px;
+    }
+
+    .login-button:hover {
+      background-color: #0056b3;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .register-link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img class="default-logo lazy loaded"
+      src="https://dt19wmazj2dns.cloudfront.net/wp-content/uploads/2024/04/amrita-vishwa-vidyapeetham-university-logo-white-version.svg"
+      alt="Amrita Vishwa Vidyapeetham" style="max-width: 150px;">
+    <h1>Hack-A-Ruckus</h1>
+  </header>
+  <div class="login-container">
+    <img src="https://education.sakshi.com/sites/default/files/2022-04/Amrita-vishwa-vidyapeetham-color-logo.png"
+      alt="Amrita Logo">
+    <h2>FIASCOde</h2>
+    <form action="http://localhost:3000/login" method="post">
+      <div class="form-group">
+          <label for="roll_number">Username:</label>
+          <input type="text" id="roll_number" name="roll_number" required>
+      </div>
+      <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required>
+      </div>
+      <div class="form-group">
+          <label for="serverOptions">Select Server:</label>
+          <select id="serverOptions" name="server" required>
+              <option value="">Server Options</option>
+              <option value="IP ADDRESS OF SERVER THAT HOSTS DOMJUDGE">Server 1</option>
+              <option value="IP ADDRESS OF SERVER THAT HOSTS DOMJUDGE">Server 2</option>
+              <option value="localhost">Local</option>
+          </select>
+      </div>
+      
+      <!-- Emergency Message Input -->
+      <div class="form-group">
+          <label for="Emergency IP">Emergency Message:</label>
+          <input type="text" id="emergencyMessage" name="emergency_ip" placeholder="Enter emergency IP (DON'T TYPE ANYTHING UNLESS OUR TEAM TELLS)">
+      </div>
+  
+      <button type="submit" class="login-button">Login</button>
+  </form>
+  
+  
+  </div>
+
+</body>
+
+</html>

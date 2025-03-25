@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Editor</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: linear-gradient(135deg, #1e1e2f, #2a2a3d);
+      color: white;
+    }
+
+    #serverOptions {
+      position: absolute;
+      top: 2%;
+      left: 30%;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      background: #28a745;
+      /* Green for server actions */
+      color: white;
+      transition: 0.3s;
+    }
+
+    #serverOptions:hover {
+      background: #218838;
+      /* Darker green on hover */
+    }
+
+
+    .submissions-button {
+      position: absolute;
+      top: 77%;
+      left: 38%;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .submissions-button:hover {
+      background-color: #0056b3;
+    }
+
+    .left-section,
+    .right-section {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    select,
+    button {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    select {
+      background: #3a3a4a;
+      color: white;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .question-container,
+    .output-container,
+    .input-container {
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .question-container {
+      flex: 6;
+      background: #29293d;
+      overflow-y: auto;
+    }
+
+    .output-container {
+      flex: 2;
+      background: #1a1a26;
+      color: #e0e0e0;
+    }
+
+    .input-container {
+      flex: 2;
+      background: #232334;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      background: #1a1a26;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      resize: none;
+    }
+
+    textarea:focus {
+      outline: 2px solid #007bff;
+    }
+
+    .editor-container {
+      flex: 1;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .editor {
+      flex: 1;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="left-section">
+    <div class="controls">
+      <select id="questionSelector">
+        <option value="question">Questions</option>
+        <option value="Question1">Question 1:   3 points</option>
+        <option value="Question2">Question 2:   8 points</option>
+        <option value="Question3">Question 3:   7 points</option>
+        <option value="Question4">Question 4:   4 points</option>
+        <option value="Question5">Question 5:   8 points</option>
+        <option value="Question6">Question 6:   6 points</option>
+        <option value="Question7">Question 7:   6 points</option>
+        <option value="Question8">Question 8:   8 points</option>
+        <option value="Question9">Question 9:   3 points</option>
+        <option value="Question10">Question 10: 7 points</option>
+      </select>
+      <select id="languageSelector">
+        <option value="python3">Python</option>
+        <option value="java">Java</option>
+      </select>
+      <button id="copyButton">Copy Code</button>
+    </div>
+    
+    <div class="question-container" id="questionBox">
+      <pre id="questionText"
+        style="background: #2a2a3d; padding: 10px; border-radius: 5px; white-space: pre-wrap; margin-top: 10px;">
+  </pre>
+      <pre id="codeDisplay"
+        style="background: #1a1a26; padding: 10px; border-radius: 5px; white-space: pre-wrap;"></pre>
+    </div>
+    <div class="output-container" id="outputBox">
+      <strong>Output will be displayed here.</strong>
+    </div>
+    <div class="input-container">
+      <label for="userInput"><strong>Enter Input:</strong></label>
+      <textarea id="userInput" placeholder="Type your input here..."></textarea>
+    </div>
+  </div>
+  <div>
+    <button id="submissionPageButton" class="submissions-button"
+      onclick="window.open('submission_details.html', '_blank')">
+      View Submissions
+    </button>
+  </div>
+
+
+
+  <div class="right-section">
+    <div class="controls">
+      <button id="runButton">Run</button>
+      <button id="submitButton">Submit</button>
+      <p id="similarity_score" style="margin-left: 10px; font-size: 14px;">Code Diff: 0%</p>
+    </div>
+    <div class="editor-container">
+      <div id="editor" class="editor"></div>
+    </div>
+  </div>
+
+  <script>
+    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs' } });
+    window.SIMILARITY_THRESHOLD = 0; // Declare globally
+    let editor, model;
+
+    // Initialize Monaco Editor
+    require(['vs/editor/editor.main'], function () {
+      model = monaco.editor.createModel('', 'java'); // Default to Java
+      editor = monaco.editor.create(document.getElementById('editor'), {
+        model: model,
+        theme: 'vs-dark',
+        fontSize: 16,
+        automaticLayout: true,
+      });
+
+      // Update difference when user types
+      editor.onDidChangeModelContent(updateDifference);
+    });
+
+    // Language selector - update Monaco editor dynamically
+    document.getElementById("languageSelector").addEventListener("change", function () {
+      const selectedLang = this.value;
+      const monacoLang = selectedLang === "python3" ? "python" : "java";
+
+      if (model) {
+        const existingCode = editor.getValue(); // Preserve existing text
+        model.dispose(); // Remove old model
+        model = monaco.editor.createModel(existingCode, monacoLang); // Apply new model
+        editor.setModel(model);
+      }
+
+      editor.onDidChangeModelContent(updateDifference); // Ensure event listener persists
+    });
+
+    // Question Selector - Update question box
+    function loadQuestion(fileName) {
+      console.log(fileName);
+      const language = document.getElementById("languageSelector").value;
+      const problemId = document.getElementById("questionSelector").value;
+      const fileExtension = language === "python3" ? "py" : "java";
+      console.log(fileExtension);
+      console.log(problemId);
+      fetch(`questions/${problemId}.txt`)
+        .then(response => {
+          if (!response.ok) throw new Error(`Failed to load problem statement: ${response.statusText}`);
+          return response.text();
+        })
+        .then(problemText => {
+          const lines = problemText.split("\n");
+          if (lines.length > 1) {
+            window.SIMILARITY_THRESHOLD = parseFloat(lines[0].trim()); // Read threshold from first line
+            document.getElementById("questionText").innerHTML = `<pre>${lines.slice(1).join("\n")}</pre>`; // Show only from 2nd line
+          } else {
+            document.getElementById("questionText").innerHTML = `<pre>${problemText}</pre>`;
+          }
+          updateDifference();
+          console.log(`Updated Difference Threshold: ${window.SIMILARITY_THRESHOLD}%`);
+        })
+        .catch(error => {
+          document.getElementById("questionText").innerHTML = `<strong>Error:</strong> ${error.message}`;
+        });
+      fetch(`questions/${fileName}.${fileExtension}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to load question file: ${response.statusText}`);
+          }
+          return response.text();
+        })
+        .then(code => {
+          document.getElementById("codeDisplay").textContent = code;
+          window.referenceCode = code;  // Store the reference code globally
+          editor.setValue(code); // Set the editor with question code
+          updateDifference();  // Update the difference percentage immediately
+        })
+        .catch(error => {
+          document.getElementById("codeDisplay").textContent = `Error: ${error.message}`;
+          window.referenceCode = "";  // Reset reference code on error
+          updateDifference();  // Ensure the difference percentage resets
+        });
+    }
+
+    // Function to compute percentage difference
+    function updateDifference() {
+      const referenceCode = window.referenceCode || "";
+      const userCode = editor.getValue() || "";
+
+      // Compute Levenshtein Distance (edit distance)
+      function compareTwoStrings(first, second) {
+        first = first.replace(/\s+/g, '');
+        second = second.replace(/\s+/g, '');
+
+        if (first === second) return 100; // Identical or empty -> 100% similarity
+        if (first.length < 2 || second.length < 2) return 0; // Very short strings -> 0% similarity
+
+        let firstBigrams = new Map();
+
+        for (let i = 0; i < first.length - 1; i++) {
+          const bigram = first.substring(i, i + 2);
+          const count = firstBigrams.has(bigram) ? firstBigrams.get(bigram) + 1 : 1;
+          firstBigrams.set(bigram, count);
+        }
+
+        let intersectionSize = 0;
+
+        for (let i = 0; i < second.length - 1; i++) {
+          const bigram = second.substring(i, i + 2);
+          const count = firstBigrams.has(bigram) ? firstBigrams.get(bigram) : 0;
+
+          if (count > 0) {
+            firstBigrams.set(bigram, count - 1);
+            intersectionSize++;
+          }
+        }
+
+        const similarityScore = (2.0 * intersectionSize) / (first.length + second.length - 2);
+        return similarityScore * 100; // Convert fraction to percentage
+      }
+
+      const similarity_score = compareTwoStrings(referenceCode, userCode);
+
+      document.getElementById("similarity_score").textContent =
+        `Code Difference: ${similarity_score.toFixed(2)}%`;
+      const submitButton = document.getElementById("submitButton");
+      if (similarity_score < SIMILARITY_THRESHOLD) {
+        // 🔴 Disable submission
+        submitButton.disabled = true;
+        submitButton.style.background = "#444"; // Grey out the button
+        submitButton.style.cursor = "not-allowed";
+
+      } else {
+        // ✅ Enable submission
+        submitButton.disabled = false;
+        submitButton.style.background = "#007bff"; // Restore button color
+        submitButton.style.cursor = "pointer";
+
+      }
+    }
+
+    // Attach event listeners
+    document.getElementById("questionSelector").addEventListener("change", function () {
+      loadQuestion(this.value);
+    });
+
+    document.getElementById("languageSelector").addEventListener("change", function () {
+      loadQuestion(document.getElementById("questionSelector").value);
+    });
+
+    // Copy Button
+    document.getElementById("copyButton").addEventListener("click", function () {
+      navigator.clipboard.writeText(window.referenceCode || "").then(() => {
+        alert("Code copied to clipboard!");
+      });
+    });
+
+
+    // Run Button - Send code to backend for execution
+    document.getElementById("runButton").addEventListener("click", function () {
+      const code = editor.getValue();
+      const language = document.getElementById("languageSelector").value;
+      const userInput = document.getElementById("userInput").value.split("\n");
+
+      fetch("http://localhost:3000/run-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language, code, input: userInput })
+      })
+        .then(response => response.json())
+        .then(data => {
+          const outputBox = document.getElementById("outputBox");
+
+          // Ensure newlines, tabs, and spaces are displayed correctly
+          outputBox.style.whiteSpace = "pre-wrap";
+          outputBox.textContent = `Output:\n${data.output || data.error || "No output"}`;
+        })
+        .catch(error => {
+          const outputBox = document.getElementById("outputBox");
+          outputBox.style.whiteSpace = "pre-wrap";
+          outputBox.textContent = `Error:\n${error.message}`;
+        });
+    });
+
+    // Submit Button - Send code for submission
+    document.getElementById("submitButton").addEventListener("click", function () {
+      const code = editor.getValue();
+      const language = document.getElementById("languageSelector").value;
+      console.log(language);
+      fetch("http://localhost:3000/submit-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problemId: document.getElementById("questionSelector").value, language }) // Adjust file path as per the language
+      })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("outputBox").innerHTML = `<strong>Submission Status:</strong><br>${data.message || data.error}`;
+        })
+        .catch(error => {
+          document.getElementById("outputBox").innerHTML = `<strong>Error:</strong> ${error.message}`;
+        });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,2 @@
+96
+Modify the given code to create a TypeError, where the given code's degree of similarity must not fall below 96%.
