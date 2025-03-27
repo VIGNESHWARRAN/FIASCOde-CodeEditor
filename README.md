@@ -1,7 +1,7 @@
 # 🚀 FIASCOde - Web-Based Code Editor
 
 ## 📌 Overview
-FIASCOde is a web-based code editor that supports Java and Python, allowing users to write, execute, and evaluate code. It integrates with DOMjudge for automated code submission and assessment.
+FIASCOde is a error making challenge, this is a web-based code editor that supports Java and Python Error evaluation, allowing users to write, execute, and evaluate code. It integrates with DOMjudge for automated code submission and assessment.
 
 ---
 
