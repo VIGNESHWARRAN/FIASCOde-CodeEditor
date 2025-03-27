@@ -51,5 +51,5 @@ node server.js
 ---
 
 ## 📩 Contact & Support
-For any issues or queries, reach out to the development team.
+For any issues or queries, reach out to me.
 
