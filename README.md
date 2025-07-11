@@ -4,7 +4,9 @@
 FIASCOde is a error making challenge, this is a web-based code editor that supports Java and Python Error evaluation, allowing users to write, execute, and evaluate code. It integrates with DOMjudge for automated code submission and assessment.
 
 ---
-
+## UI
+### Code page
+![alt text](https://github.com/VIGNESHWARRAN/FIASCOde-CodeEditor/blob/main/code_page.png)
 ## 🛠️ Dependencies
 Ensure you have the following Node.js dependencies installed:
 
