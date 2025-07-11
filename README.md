@@ -7,6 +7,9 @@ FIASCOde is a error making challenge, this is a web-based code editor that suppo
 ## UI
 ### Code page
 ![alt text](https://github.com/VIGNESHWARRAN/FIASCOde-CodeEditor/blob/main/code_page.png)
+
+## Link to my event on Unstop
+[Unstop link](https://unstop.com/hackathons/hack-a-ruckus-2025-fiascode-hack-a-ruckus-amrita-vishwa-vidyapeetham-avv-chennai-1395122)
 ## 🛠️ Dependencies
 Ensure you have the following Node.js dependencies installed:
 
